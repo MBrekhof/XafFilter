@@ -133,6 +133,31 @@ public static class CriteriaBuilders
         return null;
     }
 
+    // --- EnumMultiSelect ---------------------------------------------------
+
+    public static CriteriaOperator? BuildEnumIn(string fieldName, IReadOnlyCollection<object> selected, Type enumType)
+    {
+        if (selected.Count == 0) return null;
+        var all = Enum.GetValues(enumType).Length;
+        if (selected.Count >= all) return null;
+
+        var operands = selected.Select(v => (CriteriaOperator)new OperandValue(v));
+        return new InOperator(new OperandProperty(fieldName), operands);
+    }
+
+    public static IEnumerable<object> ReadEnumIn(CriteriaOperator? criteria, string fieldName)
+    {
+        if (criteria is InOperator io &&
+            (io.LeftOperand as OperandProperty)?.PropertyName == fieldName)
+        {
+            foreach (var operand in io.Operands)
+            {
+                if (operand is OperandValue ov && ov.Value is not null)
+                    yield return ov.Value;
+            }
+        }
+    }
+
     static decimal? ToDecimal(object? v)
         => v is null ? null : Convert.ToDecimal(v, System.Globalization.CultureInfo.InvariantCulture);
 }
