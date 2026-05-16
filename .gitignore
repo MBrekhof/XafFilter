@@ -1,0 +1,82 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+build/
+bld/
+
+# Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.userprefs
+*.swp
+
+# .NET Core / SDK
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.binlog
+
+# NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+coverage*.json
+coverage*.xml
+coverage*.info
+[Cc]overage*/
+
+# DevExpress XAF
+Model.xafml.bak
+Model.User.xafml
+*.DesignedDiffs.xafml.bak
+ModelCache/
+DevExpress.Persistent.Base.xml
+*.dxprefs
+
+# Secrets / local config
+# Note: appsettings.Development.json IS committed (template ships it with logging config, no secrets).
+# Put dev-only secrets in appsettings.Local.json or User Secrets instead.
+appsettings.Local.json
+appsettings.*.Local.json
+*.pfx
+*.key
+secrets.json
+
+# OS
+[Tt]humbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Claude Code
+CLAUDE.local.md
+.claude/settings.local.json
+
+# Logs
+*.log
+logs/
