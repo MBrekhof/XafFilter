@@ -1,5 +1,6 @@
 #nullable enable
 using DevExpress.Persistent.BaseImpl.EF;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace XafFilter.Module.BusinessObjects.Demo;
@@ -13,5 +14,5 @@ public class Customer : BaseObject
     public virtual bool IsVip { get; set; }
     public virtual DateTime CreatedAt { get; set; }
 
-    public virtual IList<Ticket> Tickets { get; set; } = new List<Ticket>();
+    public virtual IList<Ticket> Tickets { get; set; } = new ObservableCollection<Ticket>();
 }
