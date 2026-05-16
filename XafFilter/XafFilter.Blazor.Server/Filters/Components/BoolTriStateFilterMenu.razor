@@ -1,0 +1,51 @@
+@using DevExpress.Blazor
+@using DevExpress.Data.Filtering
+@using XafFilter.Module.Filters
+
+<div class="p-2" style="min-width: 140px;">
+    <DxRadioGroup Items="Options"
+                  Value="Selected"
+                  ValueChanged="@((TriState v) => Selection_Changed(v))"
+                  TextFieldName="@nameof(TriStateOption.Label)"
+                  ValueFieldName="@nameof(TriStateOption.Value)" />
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public GridDataColumnFilterMenuTemplateContext FilterContext { get; set; } = default!;
+
+    public enum TriState { All, Yes, No }
+    public record TriStateOption(string Label, TriState Value);
+
+    static readonly TriStateOption[] Options =
+    {
+        new("All", TriState.All),
+        new("Yes", TriState.Yes),
+        new("No",  TriState.No),
+    };
+
+    TriState Selected { get; set; } = TriState.All;
+
+    protected override void OnParametersSet()
+    {
+        var current = CriteriaBuilders.ReadBoolTriState(FilterContext.FilterCriteria, FilterContext.DataColumn.FieldName);
+        Selected = current switch
+        {
+            true  => TriState.Yes,
+            false => TriState.No,
+            _     => TriState.All,
+        };
+    }
+
+    void Selection_Changed(TriState v)
+    {
+        Selected = v;
+        bool? value = v switch
+        {
+            TriState.Yes => true,
+            TriState.No  => false,
+            _            => null,
+        };
+        FilterContext.FilterCriteria = CriteriaBuilders.BuildBoolTriState(FilterContext.DataColumn.FieldName, value);
+    }
+}
