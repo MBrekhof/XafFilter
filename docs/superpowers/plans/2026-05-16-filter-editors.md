@@ -1458,7 +1458,7 @@ namespace XafFilter.Module.DemoData;
 
 public static class DemoDataSeeder
 {
-    private const int Seed = 42;
+    private const int RandomSeed = 42; // const cannot be named "Seed" — collides with the Seed() method below
 
     private static readonly string[] SubjectTemplates =
     {
@@ -1491,7 +1491,7 @@ public static class DemoDataSeeder
             os.CommitChanges();
         }
 
-        Randomizer.Seed = new Random(Seed);
+        Randomizer.Seed = new Random(RandomSeed);
 
         var customers = SeedCustomers(os, count: Math.Max(5, Math.Min(p.RowCount / 10, 100)));
         var agents    = SeedAgents(os,    count: Math.Max(3, Math.Min(p.RowCount / 50, 20)));
@@ -1505,7 +1505,7 @@ public static class DemoDataSeeder
             .RuleFor(c => c.Email,     (f, c) => f.Internet.Email(c.Name))
             .RuleFor(c => c.Company,   f => f.Company.CompanyName())
             .RuleFor(c => c.IsVip,     f => f.Random.Bool(weight: 0.10f))
-            .RuleFor(c => c.CreatedAt, f => f.Date.Past(years: 2));
+            .RuleFor(c => c.CreatedAt, f => f.Date.Past(2));   // Bogus 35.6.1: positional only, no `years:` named arg
 
         var result = new List<Customer>(count);
         for (int i = 0; i < count; i++)
