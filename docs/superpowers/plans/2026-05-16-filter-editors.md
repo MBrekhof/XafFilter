@@ -1223,16 +1223,15 @@ git commit -m "feat: add Ticket demo BO with DisableCustomFilter on LegacyImport
 Create `XafFilter/XafFilter.Module/BusinessObjects/Demo/GenerateDemoDataParameters.cs`:
 
 ```csharp
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
 using DevExpress.Persistent.Base;
-using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.Validation;
 using System.ComponentModel;
 
 namespace XafFilter.Module.BusinessObjects.Demo;
 
 [DomainComponent]
-[NonPersistent]
 public class GenerateDemoDataParameters : NonPersistentBaseObject
 {
     [RuleRange(1, 100_000)]
@@ -1246,6 +1245,8 @@ public class GenerateDemoDataParameters : NonPersistentBaseObject
     public virtual bool ClearExistingFirst { get; set; }
 }
 ```
+
+Notes: `NonPersistentBaseObject` lives in `DevExpress.ExpressApp` (not `DevExpress.Persistent.BaseImpl`). The XPO-style `[NonPersistent]` attribute does not exist in the EF Core flavor — `[DomainComponent]` plus inheriting `NonPersistentBaseObject` is sufficient to mark the type as non-persistent.
 
 - [ ] **Step 2: Verify the Module project builds**
 
