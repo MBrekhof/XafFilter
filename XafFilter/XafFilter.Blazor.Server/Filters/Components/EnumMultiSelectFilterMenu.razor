@@ -1,0 +1,34 @@
+@using DevExpress.Blazor
+@using DevExpress.Data.Filtering
+@using XafFilter.Module.Filters
+
+<div class="p-2" style="min-width: 220px;">
+    <DxListBox Data="@AllValues"
+               SelectionMode="ListBoxSelectionMode.Multiple"
+               ShowCheckboxes="true"
+               Values="@Selected"
+               ValuesChanged="@((IEnumerable<object> v) => Selection_Changed(v))" />
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public GridDataColumnFilterMenuTemplateContext FilterContext { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public Type EnumType { get; set; } = default!;
+
+    object[] AllValues { get; set; } = Array.Empty<object>();
+    IEnumerable<object> Selected { get; set; } = Array.Empty<object>();
+
+    protected override void OnParametersSet()
+    {
+        AllValues = Enum.GetValues(EnumType).Cast<object>().ToArray();
+        Selected = CriteriaBuilders.ReadEnumIn(FilterContext.FilterCriteria, FilterContext.DataColumn.FieldName).ToArray();
+    }
+
+    void Selection_Changed(IEnumerable<object> values)
+    {
+        Selected = values.ToArray();
+        FilterContext.FilterCriteria = CriteriaBuilders.BuildEnumIn(
+            FilterContext.DataColumn.FieldName, (IReadOnlyCollection<object>)Selected, EnumType);
+    }
+}
