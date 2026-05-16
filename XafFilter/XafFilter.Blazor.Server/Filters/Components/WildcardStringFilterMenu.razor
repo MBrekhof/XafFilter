@@ -1,0 +1,31 @@
+@using DevExpress.Blazor
+@using DevExpress.Data.Filtering
+@using XafFilter.Module.Filters
+
+<DxFormLayout CssClass="p-2" ItemCaptionAlignment="ItemCaptionAlignment.All">
+    <DxFormLayoutItem Caption="Contains (use _ and % wildcards)" ColSpanSm="12">
+        <DxTextBox Text="@Term"
+                   TextChanged="@((string v) => Term_Changed(v))"
+                   ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto"
+                   NullText="e.g. %login%" />
+    </DxFormLayoutItem>
+</DxFormLayout>
+
+@code {
+#nullable enable
+    [Parameter, EditorRequired]
+    public GridDataColumnFilterMenuTemplateContext FilterContext { get; set; } = default!;
+
+    string? Term { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        Term = CriteriaBuilders.ReadWildcard(FilterContext.FilterCriteria, FilterContext.DataColumn.FieldName);
+    }
+
+    void Term_Changed(string v)
+    {
+        Term = v;
+        FilterContext.FilterCriteria = CriteriaBuilders.BuildWildcard(FilterContext.DataColumn.FieldName, Term);
+    }
+}
