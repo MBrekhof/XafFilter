@@ -1084,6 +1084,7 @@ Create `XafFilter/XafFilter.Module/BusinessObjects/Demo/Customer.cs`:
 ```csharp
 #nullable enable
 using DevExpress.Persistent.BaseImpl.EF;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace XafFilter.Module.BusinessObjects.Demo;
@@ -1097,7 +1098,9 @@ public class Customer : BaseObject
     public virtual bool IsVip { get; set; }
     public virtual DateTime CreatedAt { get; set; }
 
-    public virtual IList<Ticket> Tickets { get; set; } = new List<Ticket>();
+    // ObservableCollection (not List) — XAF's ChangingAndChangedNotificationsWithOriginalValues
+    // change-tracking strategy requires INotifyCollectionChanged on navigation collections.
+    public virtual IList<Ticket> Tickets { get; set; } = new ObservableCollection<Ticket>();
 }
 ```
 
@@ -1124,6 +1127,7 @@ Create `XafFilter/XafFilter.Module/BusinessObjects/Demo/Agent.cs`:
 ```csharp
 #nullable enable
 using DevExpress.Persistent.BaseImpl.EF;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace XafFilter.Module.BusinessObjects.Demo;
@@ -1136,7 +1140,9 @@ public class Agent : BaseObject
     public virtual bool IsActive { get; set; }
     public virtual int HoursPerWeek { get; set; }
 
-    public virtual IList<Ticket> AssignedTickets { get; set; } = new List<Ticket>();
+    // ObservableCollection (not List) — XAF's ChangingAndChangedNotificationsWithOriginalValues
+    // change-tracking strategy requires INotifyCollectionChanged on navigation collections.
+    public virtual IList<Ticket> AssignedTickets { get; set; } = new ObservableCollection<Ticket>();
 }
 ```
 
@@ -1609,8 +1615,10 @@ git commit -m "feat: add Bogus-powered DemoDataSeeder"
 Create `XafFilter/XafFilter.Module/Controllers/GenerateDemoDataController.cs`:
 
 ```csharp
+#nullable enable
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
+using DevExpress.ExpressApp.Templates; // ActionItemPaintStyle
 using DevExpress.Persistent.Base;
 using XafFilter.Module.BusinessObjects.Demo;
 using XafFilter.Module.DemoData;

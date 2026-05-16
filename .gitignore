@@ -1,3 +1,7 @@
+# Playwright smoke-test artifacts (created in repo root by browser MCP tools)
+.playwright-mcp/
+/*.png
+
 # Build output
 [Bb]in/
 [Oo]bj/
