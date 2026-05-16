@@ -1,0 +1,53 @@
+@using DevExpress.Blazor
+@using DevExpress.Data.Filtering
+@using XafFilter.Module.Filters
+
+<DxFormLayout CssClass="p-2" ItemCaptionAlignment="ItemCaptionAlignment.All">
+    <DxFormLayoutItem Caption="From" ColSpanSm="12">
+        <DxDateEdit T="DateTime?"
+                    Date="StartDate"
+                    DateChanged="StartDate_Changed"
+                    ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto" />
+    </DxFormLayoutItem>
+    <DxFormLayoutItem Caption="To" ColSpanSm="12">
+        <DxDateEdit T="DateTime?"
+                    Date="EndDate"
+                    DateChanged="EndDate_Changed"
+                    ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto" />
+    </DxFormLayoutItem>
+</DxFormLayout>
+
+@code {
+    [Parameter, EditorRequired]
+    public GridDataColumnFilterMenuTemplateContext FilterContext { get; set; } = default!;
+
+    DateTime? StartDate { get; set; }
+    DateTime? EndDate { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        var (from, to) = CriteriaBuilders.ReadDateRange(FilterContext.FilterCriteria, FilterContext.DataColumn.FieldName);
+        StartDate = from;
+        EndDate = to;
+    }
+
+    void StartDate_Changed(DateTime? v)
+    {
+        StartDate = v;
+        if (StartDate is { } s && EndDate is { } e && s > e) EndDate = s;
+        ApplyCriteria();
+    }
+
+    void EndDate_Changed(DateTime? v)
+    {
+        EndDate = v;
+        if (StartDate is { } s && EndDate is { } e && s > e) StartDate = e;
+        ApplyCriteria();
+    }
+
+    void ApplyCriteria()
+    {
+        FilterContext.FilterCriteria = CriteriaBuilders.BuildDateRange(
+            FilterContext.DataColumn.FieldName, StartDate, EndDate);
+    }
+}
