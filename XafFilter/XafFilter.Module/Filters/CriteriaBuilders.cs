@@ -158,6 +158,26 @@ public static class CriteriaBuilders
         }
     }
 
+    // --- BoolTriState ------------------------------------------------------
+
+    public static CriteriaOperator? BuildBoolTriState(string fieldName, bool? value)
+    {
+        if (value is null) return null;
+        return new BinaryOperator(fieldName, value.Value, BinaryOperatorType.Equal);
+    }
+
+    public static bool? ReadBoolTriState(CriteriaOperator? criteria, string fieldName)
+    {
+        if (criteria is BinaryOperator bo &&
+            bo.OperatorType == BinaryOperatorType.Equal &&
+            (bo.LeftOperand as OperandProperty)?.PropertyName == fieldName &&
+            (bo.RightOperand as OperandValue)?.Value is bool b)
+        {
+            return b;
+        }
+        return null;
+    }
+
     static decimal? ToDecimal(object? v)
         => v is null ? null : Convert.ToDecimal(v, System.Globalization.CultureInfo.InvariantCulture);
 }
