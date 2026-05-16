@@ -34,6 +34,10 @@ namespace XafFilter.Module
             AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.EF.FileData));
             AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.EF.FileAttachment));
             AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.EF.HCategory));
+            AdditionalExportedTypes.Add(typeof(XafFilter.Module.BusinessObjects.Demo.Customer));
+            AdditionalExportedTypes.Add(typeof(XafFilter.Module.BusinessObjects.Demo.Agent));
+            AdditionalExportedTypes.Add(typeof(XafFilter.Module.BusinessObjects.Demo.Ticket));
+            AdditionalExportedTypes.Add(typeof(XafFilter.Module.BusinessObjects.Demo.GenerateDemoDataParameters));
         }
         public override IEnumerable<ModuleUpdater> GetModuleUpdaters(IObjectSpace objectSpace, Version versionFromDB)
         {

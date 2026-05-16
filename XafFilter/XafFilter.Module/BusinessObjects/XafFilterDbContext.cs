@@ -20,6 +20,9 @@ namespace XafFilter.Module.BusinessObjects
         public DbSet<PermissionPolicyRole> Roles { get; set; }
         public DbSet<XafFilter.Module.BusinessObjects.ApplicationUser> Users { get; set; }
         public DbSet<XafFilter.Module.BusinessObjects.ApplicationUserLoginInfo> UserLoginsInfo { get; set; }
+        public DbSet<XafFilter.Module.BusinessObjects.Demo.Customer> Customers { get; set; }
+        public DbSet<XafFilter.Module.BusinessObjects.Demo.Agent> Agents { get; set; }
+        public DbSet<XafFilter.Module.BusinessObjects.Demo.Ticket> Tickets { get; set; }
         public DbSet<FileData> FileData { get; set; }
         public DbSet<HCategory> HCategories { get; set; }
 
