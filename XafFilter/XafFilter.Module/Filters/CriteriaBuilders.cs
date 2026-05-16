@@ -51,4 +51,60 @@ public static class CriteriaBuilders
         }
         return (null, null);
     }
+
+    // --- NumericRange ------------------------------------------------------
+
+    public static CriteriaOperator? BuildNumericRange(string fieldName, decimal? from, decimal? to, Type targetType)
+    {
+        if (from is null && to is null) return null;
+
+        object? Cast(decimal value)
+        {
+            try { return Convert.ChangeType(value, targetType, System.Globalization.CultureInfo.InvariantCulture); }
+            catch (OverflowException) { return null; }
+            catch (InvalidCastException) { return null; }
+        }
+
+        var prop = new OperandProperty(fieldName);
+
+        if (from is { } f && to is { } t)
+        {
+            var fCast = Cast(f);
+            var tCast = Cast(t);
+            if (fCast is null || tCast is null) return null;
+            return new BetweenOperator(prop, new OperandValue(fCast), new OperandValue(tCast));
+        }
+        if (from is { } fOnly)
+        {
+            var cast = Cast(fOnly);
+            return cast is null ? null : new BinaryOperator(fieldName, cast, BinaryOperatorType.GreaterOrEqual);
+        }
+        var toCast = Cast(to!.Value);
+        return toCast is null ? null : new BinaryOperator(fieldName, toCast, BinaryOperatorType.LessOrEqual);
+    }
+
+    public static (decimal? From, decimal? To) ReadNumericRange(CriteriaOperator? criteria, string fieldName)
+    {
+        if (criteria is BetweenOperator bo &&
+            (bo.TestExpression as OperandProperty)?.PropertyName == fieldName)
+        {
+            return (ToDecimal((bo.BeginExpression as OperandValue)?.Value),
+                    ToDecimal((bo.EndExpression   as OperandValue)?.Value));
+        }
+        if (criteria is BinaryOperator bin &&
+            (bin.LeftOperand as OperandProperty)?.PropertyName == fieldName)
+        {
+            var val = ToDecimal((bin.RightOperand as OperandValue)?.Value);
+            return bin.OperatorType switch
+            {
+                BinaryOperatorType.GreaterOrEqual => (val, null),
+                BinaryOperatorType.LessOrEqual    => (null, val),
+                _ => (null, null),
+            };
+        }
+        return (null, null);
+    }
+
+    static decimal? ToDecimal(object? v)
+        => v is null ? null : Convert.ToDecimal(v, System.Globalization.CultureInfo.InvariantCulture);
 }
