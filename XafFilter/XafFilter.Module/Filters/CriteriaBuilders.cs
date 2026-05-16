@@ -105,6 +105,34 @@ public static class CriteriaBuilders
         return (null, null);
     }
 
+    // --- WildcardString ----------------------------------------------------
+
+    // DevExpress 25.2.5 only exposes full SQL LIKE pattern matching (with _ and % wildcards)
+    // through the obsolete BinaryOperatorType.Like. The replacement FunctionOperatorType members
+    // (Contains, StartsWith, EndsWith) treat _ and % as literal characters, so they cannot meet
+    // the spec's raw-LIKE requirement. We suppress CS0618 narrowly until DevExpress restores a
+    // non-obsolete equivalent.
+    public static CriteriaOperator? BuildWildcard(string fieldName, string? term)
+    {
+        if (string.IsNullOrWhiteSpace(term)) return null;
+#pragma warning disable CS0618 // BinaryOperatorType.Like is obsolete but still the only way to get raw SQL LIKE.
+        return new BinaryOperator(fieldName, term, BinaryOperatorType.Like);
+#pragma warning restore CS0618
+    }
+
+    public static string? ReadWildcard(CriteriaOperator? criteria, string fieldName)
+    {
+#pragma warning disable CS0618 // BinaryOperatorType.Like is obsolete but still the only way to get raw SQL LIKE.
+        if (criteria is BinaryOperator bin &&
+            bin.OperatorType == BinaryOperatorType.Like &&
+            (bin.LeftOperand as OperandProperty)?.PropertyName == fieldName)
+        {
+            return (bin.RightOperand as OperandValue)?.Value as string;
+        }
+#pragma warning restore CS0618
+        return null;
+    }
+
     static decimal? ToDecimal(object? v)
         => v is null ? null : Convert.ToDecimal(v, System.Globalization.CultureInfo.InvariantCulture);
 }
