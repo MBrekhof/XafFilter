@@ -342,6 +342,7 @@ Expected: compile error — `CriteriaBuilders` does not exist.
 Create `XafFilter/XafFilter.Module/Filters/CriteriaBuilders.cs`:
 
 ```csharp
+#nullable enable
 using DevExpress.Data.Filtering;
 
 namespace XafFilter.Module.Filters;
