@@ -1082,6 +1082,7 @@ git commit -m "feat: add TicketStatus and TicketSeverity enums"
 Create `XafFilter/XafFilter.Module/BusinessObjects/Demo/Customer.cs`:
 
 ```csharp
+#nullable enable
 using DevExpress.Persistent.BaseImpl.EF;
 using System.ComponentModel;
 
@@ -1121,6 +1122,7 @@ git commit -m "feat: add Customer demo BO"
 Create `XafFilter/XafFilter.Module/BusinessObjects/Demo/Agent.cs`:
 
 ```csharp
+#nullable enable
 using DevExpress.Persistent.BaseImpl.EF;
 using System.ComponentModel;
 
@@ -1157,6 +1159,7 @@ git commit -m "feat: add Agent demo BO"
 Create `XafFilter/XafFilter.Module/BusinessObjects/Demo/Ticket.cs`:
 
 ```csharp
+#nullable enable
 using DevExpress.Persistent.BaseImpl.EF;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
