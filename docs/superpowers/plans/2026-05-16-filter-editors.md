@@ -50,6 +50,10 @@ Replace the entire contents of `XafFilter/XafFilter.Module.Tests/XafFilter.Modul
   </ItemGroup>
 
   <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\XafFilter.Module\XafFilter.Module.csproj" />
   </ItemGroup>
 </Project>
@@ -2478,6 +2482,10 @@ Replace `XafFilter/XafFilter.Blazor.Server.Tests/XafFilter.Blazor.Server.Tests.c
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
     <PackageReference Include="Microsoft.Playwright" Version="1.49.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
   </ItemGroup>
 </Project>
 ```
