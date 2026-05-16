@@ -1,0 +1,60 @@
+@using DevExpress.Blazor
+@using DevExpress.Data.Filtering
+@using XafFilter.Module.Filters
+
+<DxFormLayout CssClass="p-2" ItemCaptionAlignment="ItemCaptionAlignment.All">
+    <DxFormLayoutItem Caption="From" ColSpanSm="12">
+        <DxSpinEdit T="decimal?"
+                    Value="From"
+                    ValueChanged="@((decimal? v) => From_Changed(v))"
+                    Format="@NumberFormat"
+                    ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto" />
+    </DxFormLayoutItem>
+    <DxFormLayoutItem Caption="To" ColSpanSm="12">
+        <DxSpinEdit T="decimal?"
+                    Value="To"
+                    ValueChanged="@((decimal? v) => To_Changed(v))"
+                    Format="@NumberFormat"
+                    ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto" />
+    </DxFormLayoutItem>
+</DxFormLayout>
+
+@code {
+    [Parameter, EditorRequired]
+    public GridDataColumnFilterMenuTemplateContext FilterContext { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public Type TargetType { get; set; } = default!;
+    [Parameter] public bool IsInteger { get; set; }
+
+    decimal? From { get; set; }
+    decimal? To { get; set; }
+
+    string NumberFormat => IsInteger ? "N0" : "N2";
+
+    protected override void OnParametersSet()
+    {
+        var (from, to) = CriteriaBuilders.ReadNumericRange(FilterContext.FilterCriteria, FilterContext.DataColumn.FieldName);
+        From = from;
+        To = to;
+    }
+
+    void From_Changed(decimal? v)
+    {
+        From = v;
+        if (From is { } f && To is { } t && f > t) To = f;
+        ApplyCriteria();
+    }
+
+    void To_Changed(decimal? v)
+    {
+        To = v;
+        if (From is { } f && To is { } t && f > t) From = t;
+        ApplyCriteria();
+    }
+
+    void ApplyCriteria()
+    {
+        FilterContext.FilterCriteria = CriteriaBuilders.BuildNumericRange(
+            FilterContext.DataColumn.FieldName, From, To, TargetType);
+    }
+}
