@@ -7,4 +7,5 @@
   <Project Path="XafFilter/XafFilter.Blazor.Server/XafFilter.Blazor.Server.csproj" />
   <Project Path="XafFilter/XafFilter.Module/XafFilter.Module.csproj" />
   <Project Path="XafFilter/XafFilter.Module.Tests/XafFilter.Module.Tests.csproj" />
+  <Project Path="XafFilter/XafFilter.Blazor.Server.Tests/XafFilter.Blazor.Server.Tests.csproj" />
 </Solution>
