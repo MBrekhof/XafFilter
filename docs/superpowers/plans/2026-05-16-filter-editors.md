@@ -261,7 +261,7 @@ public class DateRangeCriteriaTests
     }
 
     [Fact]
-    public void Build_InvertedRange_NormalizesEndpoints()
+    public void Build_InvertedRange_PreservesInputOrder()
     {
         var from = new DateTime(2026, 1, 31);
         var to   = new DateTime(2026, 1, 1);
@@ -652,25 +652,27 @@ public class WildcardStringCriteriaTests
         Assert.Null(CriteriaBuilders.BuildWildcard(Field, "   "));
     }
 
+#pragma warning disable CS0618 // BinaryOperatorType.Like is obsolete but still the only way to get raw SQL LIKE.
+
     [Fact]
-    public void Build_Term_ReturnsLikeFunctionOperator()
+    public void Build_Term_ReturnsLikeBinaryOperator()
     {
-        var op = (FunctionOperator)CriteriaBuilders.BuildWildcard(Field, "%login%")!;
-        Assert.Equal(FunctionOperatorType.Like, op.OperatorType);
-        Assert.Equal(Field, ((OperandProperty)op.Operands[0]).PropertyName);
-        Assert.Equal("%login%", ((OperandValue)op.Operands[1]).Value);
+        var op = (BinaryOperator)CriteriaBuilders.BuildWildcard(Field, "%login%")!;
+        Assert.Equal(BinaryOperatorType.Like, op.OperatorType);
+        Assert.Equal(Field, ((OperandProperty)op.LeftOperand).PropertyName);
+        Assert.Equal("%login%", ((OperandValue)op.RightOperand).Value);
     }
 
     [Fact]
     public void Build_WildcardWithUnderscoreAndPercent_PassesThroughLiteral()
     {
-        var op = (FunctionOperator)CriteriaBuilders.BuildWildcard(Field, "a_b%c")!;
+        var op = (BinaryOperator)CriteriaBuilders.BuildWildcard(Field, "a_b%c")!;
         // Raw LIKE semantics: _ and % are passed through unchanged.
-        Assert.Equal("a_b%c", ((OperandValue)op.Operands[1]).Value);
+        Assert.Equal("a_b%c", ((OperandValue)op.RightOperand).Value);
     }
 
     [Fact]
-    public void Read_LikeFunctionOperator_RecoversTerm()
+    public void Read_LikeBinaryOperator_RecoversTerm()
     {
         var criteria = CriteriaBuilders.BuildWildcard(Field, "%login%");
         var term = CriteriaBuilders.ReadWildcard(criteria, Field);
@@ -709,21 +711,29 @@ Append inside `CriteriaBuilders`:
 ```csharp
     // --- WildcardString ----------------------------------------------------
 
+    // DevExpress 25.2.5 only exposes full SQL LIKE pattern matching (with _ and % wildcards)
+    // through the obsolete BinaryOperatorType.Like. The replacement FunctionOperatorType members
+    // (Contains, StartsWith, EndsWith) treat _ and % as literal characters, so they cannot meet
+    // the spec's raw-LIKE requirement. We suppress CS0618 narrowly until DevExpress restores a
+    // non-obsolete equivalent.
     public static CriteriaOperator? BuildWildcard(string fieldName, string? term)
     {
         if (string.IsNullOrWhiteSpace(term)) return null;
-        return new FunctionOperator(FunctionOperatorType.Like, new OperandProperty(fieldName), new OperandValue(term));
+#pragma warning disable CS0618 // BinaryOperatorType.Like is obsolete but still the only way to get raw SQL LIKE.
+        return new BinaryOperator(fieldName, term, BinaryOperatorType.Like);
+#pragma warning restore CS0618
     }
 
     public static string? ReadWildcard(CriteriaOperator? criteria, string fieldName)
     {
-        if (criteria is FunctionOperator fo &&
-            fo.OperatorType == FunctionOperatorType.Like &&
-            fo.Operands.Count == 2 &&
-            (fo.Operands[0] as OperandProperty)?.PropertyName == fieldName)
+#pragma warning disable CS0618 // BinaryOperatorType.Like is obsolete but still the only way to get raw SQL LIKE.
+        if (criteria is BinaryOperator bin &&
+            bin.OperatorType == BinaryOperatorType.Like &&
+            (bin.LeftOperand as OperandProperty)?.PropertyName == fieldName)
         {
-            return (fo.Operands[1] as OperandValue)?.Value as string;
+            return (bin.RightOperand as OperandValue)?.Value as string;
         }
+#pragma warning restore CS0618
         return null;
     }
 ```
