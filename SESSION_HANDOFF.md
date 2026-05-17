@@ -1,12 +1,31 @@
-# Session Handoff — 2026-05-16 (Tasks 15-24 + plan finished)
+# Session Handoff — 2026-05-17 (nav-click test)
 
 ## Current state
 
-- **Branch:** `main` (no worktree, no remote — solo project, history is local-only)
-- **HEAD:** `5792e8f` (docs: filter contract in xaf-filter-notes skill)
+- **Branch:** `main` — pushed to `origin` (https://github.com/MBrekhof/XafFilter.git)
+- **HEAD:** `ee48bfb` (test: add nav-panel click test for Support group)
 - **Working tree:** clean
 - **Build:** 0 warnings, 0 errors across whole solution (Debug + EasyTest configs both green)
-- **Tests:** 55 xUnit (criteria + seeder, ~1s) + 9 Playwright (smoke + filter rendering + light theme, ~80s)
+- **Tests:** 55 xUnit (criteria + seeder, ~1s) + 10 Playwright (smoke + filter rendering + light theme + nav-click, ~46s)
+
+## This session
+
+Caught a gap in the existing Playwright suite: every smoke test deep-linked to
+`/Ticket_ListView`, so when commit `ba5a322` had to retroactively add
+`[DefaultClassOptions]` + `[NavigationItem("Support")]` to Agent / Customer /
+Ticket, no test failed first — the regression was invisible to URL-driven tests.
+
+Added `Smoke/NavigationPanelTests.cs` (commit `ee48bfb`) which clicks through the
+nav sidebar: verifies the **Support** accordion group exists, asserts all three
+demo BOs surface as `role="treeitem"` anchors, and confirms clicking the Ticket
+nav link lands on `/Ticket_ListView` with the Generate-Demo-Data action present.
+
+Selectors verified live (the DevExtreme accordion group exposes `role="group"`
+only via AOM, not as a literal DOM attribute — anchor on `a[role="treeitem"]`
+and `.dxbl-accordion-group:has-text('Support')` instead).
+
+Feedback saved to memory: `feedback_xaf_nav_deeplink_gap` — future XAF Playwright
+suites must include at least one nav-panel click test, not only deep links.
 
 ## What's done
 
@@ -28,11 +47,11 @@ The plan at `docs/superpowers/plans/2026-05-16-filter-editors.md` is now **24 of
 
 Also retroactive fix during Task 15 smoke: `c987aea fix: use ObservableCollection on demo BO nav collections` (Customer.Tickets, Agent.AssignedTickets) — silent bug caught only by exercising the real XAF DbContext through the seeder UI.
 
-## Tests at end of plan
+## Tests
 
 ```
 dotnet test XafFilter/XafFilter.Module.Tests          # 55 passing — criteria builders + DemoDataSeeder
-dotnet test XafFilter/XafFilter.Blazor.Server.Tests   # 9 passing  — Playwright (login + 6 filter render + 1 theme)
+dotnet test XafFilter/XafFilter.Blazor.Server.Tests   # 10 passing — Playwright (login + 6 filter render + 1 theme + 1 nav-click)
 ```
 
 The Playwright suite runs against a fresh server fixture (`AppFixture` in `Fixtures/AppFixture.cs`) on `http://localhost:5000`, `-c EasyTest`, `ASPNETCORE_ENVIRONMENT=Development`. Each test gets its own logged-in browser context.
@@ -58,6 +77,11 @@ This plan is complete. Future filter work:
 Latest 15:
 
 ```
+ee48bfb test: add nav-panel click test for Support group
+ba5a322 navigation attributes added
+0eca6af docs: add MIT license
+2214b37 docs: README with project overview + Playwright screenshot tour
+25aab78 docs: update session handoff after completing 24/24 tasks
 5792e8f docs: document filter contract, opt-out, demo seeder in xaf-filter-notes skill
 b33bfd6 test: add light-theme verification with screenshot
 673ed3a test: add Playwright smoke tests for all 5 filters + opt-out
@@ -68,9 +92,4 @@ eb4bcd2 feat: add EnumMultiSelect filter menu + controller
 f0b82d6 feat: add NumericRange filter menu + controller
 179bdb9 feat: add DateRange filter menu + controller
 92f97a9 Fix plan: ObservableCollection + Templates using, ignore smoke artifacts
-8b236a4 feat: add Generate Demo Data popup action for Ticket list
-c987aea fix: use ObservableCollection on demo BO nav collections
-68247e6 Session handoff after Task 14 (15/24 tasks complete, 55 tests)
-df54ddd Fix plan: Task 14 adaptations (RandomSeed const, Bogus positional arg)
-f2010f0 feat: add Bogus-powered DemoDataSeeder
 ```
