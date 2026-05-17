@@ -210,4 +210,4 @@ User-global skills also used heavily:
 
 ## License
 
-Private — internal project, no public license.
+[MIT](LICENSE) © 2026 Martin Brekhof
