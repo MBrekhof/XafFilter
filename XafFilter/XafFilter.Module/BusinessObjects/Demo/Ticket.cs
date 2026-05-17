@@ -1,4 +1,5 @@
 #nullable enable
+using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl.EF;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,6 +8,8 @@ using XafFilter.Module.Filters;
 namespace XafFilter.Module.BusinessObjects.Demo;
 
 [DefaultProperty(nameof(Subject))]
+[DefaultClassOptions]
+[NavigationItem("Support")]
 public class Ticket : BaseObject
 {
     public virtual string Subject { get; set; } = string.Empty;

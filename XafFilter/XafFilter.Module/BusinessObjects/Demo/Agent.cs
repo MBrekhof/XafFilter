@@ -1,4 +1,5 @@
 #nullable enable
+using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl.EF;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -6,6 +7,8 @@ using System.ComponentModel;
 namespace XafFilter.Module.BusinessObjects.Demo;
 
 [DefaultProperty(nameof(DisplayName))]
+[DefaultClassOptions]
+[NavigationItem("Support")]
 public class Agent : BaseObject
 {
     public virtual string DisplayName { get; set; } = string.Empty;

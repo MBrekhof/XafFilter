@@ -1,4 +1,5 @@
 #nullable enable
+using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl.EF;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -6,6 +7,8 @@ using System.ComponentModel;
 namespace XafFilter.Module.BusinessObjects.Demo;
 
 [DefaultProperty(nameof(Name))]
+[DefaultClassOptions]
+[NavigationItem("Support")]
 public class Customer : BaseObject
 {
     public virtual string Name { get; set; } = string.Empty;
